@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.2</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.winxin</groupId>
+    <artifactId>winxin-blog-backend</artifactId>
+    <version>0.1.0</version>
+    <name>winxin-blog-backend</name>
+    <description>WinXin 个人博客系统 · 后端基础框架（Spring Boot 4 + Java 21）</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <!-- 第三方依赖版本：与 Boot 4 的兼容性依据见 docs/02-依赖清单.md，review 后可锁定 -->
+        <mybatis-plus.version>3.5.18</mybatis-plus.version>
+        <springdoc.version>3.2.0</springdoc.version>
+        <spring-ai.version>2.0.2</spring-ai.version>
+    </properties>
+
+    <dependencies>
+        <!-- Web MVC：Boot 4 起该 starter 聚合 spring-boot-webmvc / spring-boot-starter-jackson /
+             spring-boot-starter-tomcat / spring-boot-http-converter 四个模块（starter 名称保持兼容） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 参数校验（Hibernate Validator，jakarta.validation） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Redis：仅引入依赖位，连接为懒加载，未配置缓存策略（边界：缓存策略由你实现） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- MyBatis-Plus：Boot 4 专用 starter（勿再混用 boot3/boot2 starter，也不要额外引入 mybatis / mybatis-spring） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
+
+        <!-- MyBatis-Plus 3.5.9+ 将依赖 jsqlparser 的能力拆为可选模块，分页插件 PaginationInnerInterceptor 在其中 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
+
+
+        <!-- MySQL 驱动：版本由 spring-boot-starter-parent 4.1.2 的 BOM 统一管理 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- 接口文档：springdoc-openapi 3.x（官方声明适配 Boot 4 的版本线）。
+             Knife4j 尚未适配 Boot 4，故按约定降级为 springdoc + Swagger UI；理由见 docs/02-依赖清单.md -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+
+        <!-- Lombok：版本由 Boot BOM 管理 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- AI 依赖位预留：Spring AI 2.0.x 是官方适配 Boot 4.0/4.1 的版本线（1.x 只适配 Boot 3）。
+             BOM 已在 dependencyManagement 引入；模型接入由你自己实现，启用时取消注释对应 starter，例如：
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+        -->
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring AI BOM：仅声明版本，未引入任何 starter，不影响启动 -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
