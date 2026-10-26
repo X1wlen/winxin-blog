@@ -30,6 +30,13 @@ const router = createRouter({
         },
       ],
     },
+    // 登录页：独立于布局（无导航栏）
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/LoginView.vue'),
+      meta: { title: '登录' },
+    },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',

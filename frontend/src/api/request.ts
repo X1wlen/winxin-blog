@@ -7,6 +7,7 @@ import axios, {
 import { ElMessage } from 'element-plus'
 
 import type { Result } from './types'
+import { TOKEN_KEY } from '@/stores/user'
 
 /** 后端约定的成功业务码（ResultCode.SUCCESS） */
 export const SUCCESS_CODE = 0
@@ -26,9 +27,11 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  // TODO(认证模块): 登录接入后在此携带 Token，例如：
-  // const token = useUserStore().token
-  // if (token) config.headers.Authorization = `Bearer ${token}`
+  // 已登录则统一附加凭证；Token 的签发/校验/失效由后端认证模块负责
+  const token = localStorage.getItem(TOKEN_KEY)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 })
 

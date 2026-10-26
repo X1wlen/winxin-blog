@@ -1,13 +1,25 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
 
-/** 导航菜单：新增页面时在此登记（骨架阶段仅两条） */
+/** 导航菜单：新增页面时在此登记 */
 const menus = [
   { path: '/', title: '首页' },
   { path: '/health', title: '健康检查' },
 ]
+
+function onLogout() {
+  // TODO(认证模块): 调用 POST /api/v1/auth/logout 使服务端 Token 失效（Mock 模式下仅清本地）
+  userStore.logout()
+  ElMessage.success('已退出登录')
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -18,8 +30,13 @@ const menus = [
         {{ menu.title }}
       </el-menu-item>
     </el-menu>
-    <!-- 预留：登录态展示区（认证模块接入后放头像/登录按钮） -->
-    <div class="navbar-right"></div>
+    <div class="navbar-right">
+      <template v-if="userStore.user">
+        <span class="nickname">{{ userStore.user.nickname }}</span>
+        <el-button link type="info" @click="onLogout">退出</el-button>
+      </template>
+      <el-button v-else type="primary" size="small" tag="RouterLink" to="/login">登录</el-button>
+    </div>
   </div>
 </template>
 
@@ -45,6 +62,15 @@ const menus = [
 }
 
 .navbar-right {
-  min-width: 64px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 96px;
+  justify-content: flex-end;
+}
+
+.nickname {
+  font-size: 14px;
+  color: var(--el-text-color-primary);
 }
 </style>
